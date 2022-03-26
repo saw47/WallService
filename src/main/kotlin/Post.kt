@@ -50,7 +50,7 @@ internal object WallService {
     internal fun add(post: Post): Post {
         post.id = if (posts.isNotEmpty()) {
             (posts.lastIndex + 1)
-        } else -2
+        } else 0
         posts += post
         return post
     }
