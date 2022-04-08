@@ -39,6 +39,11 @@ internal data class Post(
     var reposts = Reposts(
         userReposted = repostsUserReposted
     )
+
+    val geo: Geo = Geo()
+    val postSource = PostSource()
+    var attachments = emptyArray<Attachments?>()
+
 }
 
 internal object WallService {
@@ -107,7 +112,6 @@ internal object WallService {
 
             updatePost.id = post.id
             updatePost.date = post.date
-
             posts[post.id] = updatePost
             return true
         } else {
