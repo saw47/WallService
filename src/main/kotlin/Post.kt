@@ -1,4 +1,4 @@
-internal data class Post(
+data class Post(
     val fromId: Int,
     val createdBy: Int,
     val text: String,
@@ -25,7 +25,7 @@ internal data class Post(
 
     val copyHistory = emptyArray<Post>()
 
-    var comments = Comments(
+    var comment = Comments(
         canPost = commentsCanPost,
         groupsCanPost = commentsGroupsCanPost
     )
@@ -44,30 +44,78 @@ internal data class Post(
     val postSource = PostSource()
     var attachments = emptyArray<Attachments?>()
 
+
 }
 
-internal object WallService {
-
+object WallService {
     private var posts = emptyArray<Post>()
+    private var comments = emptyArray<Comment>()
 
+    fun clearCommentsArrayToTests() {
+        if (comments.isNotEmpty()) {
+            comments = emptyArray()
+        }
+    }
+    fun clearPostsArrayToTests() {
+        if (posts.isNotEmpty()) {
+            posts = emptyArray()
+        }
+    }
     fun copyPostsArrayToTests(): Array<Post> {
-        var copyPosts = emptyArray<Post>()
-        copyPosts = posts
-        return copyPosts
+        return posts
+    }
+    fun copyCommentsArrayToTests(): Array<Comment> {
+        return comments
     }
 
-    fun clearPostsArrayToTests(){
-        posts = emptyArray()
+
+    fun createComment(comment: Comment) {
+        val ownerId: Int = comment.fromId
+        val postId: Int = comment.postId
+        var fromGroup: UInt = 0u
+        var message: String? = null
+        val stickerId: UInt
+        val guid: Int
+        val replyToComment: Int
+        var attachments: String = ""
+        var postInPosts = -1
+
+        for (post in posts) {
+            if (post.id == postId) {
+                if (comment.attachments.isEmpty()) {
+                    if (comment.text == null) {
+                        error("aren't content Exception")
+                    } else {
+                        message = comment.text
+                    }
+                } else {
+                    val comma: String = ",";
+                    for (i: Int in 0 until comment.attachments.size) {
+                        val internalAttachments: String =
+                            comment.attachments[i].type + comment.fromId + "_" + comment.attachments[i].returnAttachableMediaId()
+                        attachments += internalAttachments
+                        if (i < (comment.attachments.size - 1)) {
+                            attachments += comma
+                        }
+                    }
+                }
+                postInPosts = 1
+                post.comment.count += 1u
+                comments += comment
+            }
+        }
+
+        if (postInPosts == -1) throw PostNotFoundException("Post not found")
     }
 
-    internal fun add(post: Post): Post {
+    fun add(post: Post): Post {
         val addedPost = post.copy()
         addedPost.id = if (posts.isNotEmpty()) (posts.lastIndex + 1) else 0
         posts += addedPost
         return addedPost
     }
 
-    internal fun update(post: Post): Boolean {
+    fun update(post: Post): Boolean {
         if (post.id in posts.indices && post.id == posts[post.id].id) {
             val updatePost: Post = post.copy(
                 fromId = post.fromId,
@@ -84,16 +132,16 @@ internal object WallService {
                 isPinned = post.isPinned,
                 markedAsAds = post.markedAsAds,
                 isFavorite = post.isFavorite,
-                commentsCanPost = post.comments.canPost,
-                commentsGroupsCanPost = post.comments.groupsCanPost,
+                commentsCanPost = post.comment.canPost,
+                commentsGroupsCanPost = post.comment.groupsCanPost,
                 likesUserLikes = post.likes.userLikes,
                 likesCanLike = post.likes.canLike,
                 likesCanPublish = post.likes.canPublish,
                 repostsUserReposted = post.reposts.userReposted
             )
 
-            updatePost.comments = post.comments.copy(
-                count = post.comments.count,
+            updatePost.comment = post.comment.copy(
+                count = post.comment.count,
                 canPost = updatePost.commentsCanPost,
                 groupsCanPost = updatePost.commentsGroupsCanPost
             )
