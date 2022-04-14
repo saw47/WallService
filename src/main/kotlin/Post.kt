@@ -21,7 +21,7 @@ data class Post(
     val repostsUserReposted: Boolean
 ) {
     var id: Int = -1
-    var date: Int = (System.currentTimeMillis() * 1000).toInt()
+    var date: Int = (System.currentTimeMillis() / 1000).toInt()
 
     val copyHistory = emptyArray<Post>()
 
