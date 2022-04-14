@@ -47,7 +47,7 @@ object NoteService {
         privacyComment: String
     ): Int {
         val note = Note(
-            ownerId = OwnerService.getId(),
+            ownerId = OwnerService.getId().toInt(),
             title = title,
             text = text,
             privacyView = privacyView,
@@ -107,7 +107,7 @@ object NoteService {
 
 
     fun delete(noteId: UInt): Int {
-        val note: Note? = NoteService.noteIdMap[OwnerService.getId()]?.get(noteId.toInt())
+        val note: Note? = NoteService.noteIdMap[OwnerService.getId().toInt()]?.get(noteId.toInt())
 
         return if (note != null && !note.isDelete) {
             note.isDelete = true
@@ -143,7 +143,7 @@ object NoteService {
         privacyView: String,
         privacyComment: String
     ): Int {
-        val note: Note? = noteIdMap[OwnerService.getId()]?.get(noteId.toInt())
+        val note: Note? = noteIdMap[OwnerService.getId().toInt()]?.get(noteId.toInt())
         val returnValue: Int
 
         if (note != null && !note.isDelete) {
@@ -204,28 +204,6 @@ object NoteService {
             sort = sort
         )
         return returnObject as List<Note>
-
-//        if (noteIdMap[userId.toInt()] == null || noteIdMap[userId.toInt()]?.size!! < (offset + count).toInt()
-//        ) {
-//            error("Index out of bounds or comments is not found from this user")
-//        } else {
-//            val notesList = noteIdMap[userId.toInt()]?.copyOfRange(offset.toInt(), (offset + count).toInt())
-//                ?.toList()
-//
-//            if (notesList != null) {
-//                return when (sort) {
-//                    1U -> {
-//                        notesList.sortedBy { n: Note -> n.date }
-//                    }
-//                    0U -> {
-//                        notesList.sortedBy { n: Note -> n.date }.asReversed()
-//                    }
-//                    else -> error("illegal sort type exception")
-//                }
-//            } else {
-//                error("illegal arguments")
-//            }
-//        }
     }
 
     fun getById(
@@ -233,7 +211,6 @@ object NoteService {
         ownerId: UInt,
         needWiki: Boolean = false
     ): Note? {
-
         if (noteIdMap[ownerId.toInt()]?.get(noteId.toInt()) != null) {
             if (noteIdMap[ownerId.toInt()]?.get(noteId.toInt())?.isDelete == true) {
                 throw ObjectDeleteException("Note is delete")
@@ -262,7 +239,6 @@ object NoteService {
         return returnObject as List<NoteComments>
     }
 
-
     fun getFriendNotes(
         offset: UInt,
         count: UInt
@@ -280,16 +256,17 @@ object NoteService {
         var returnIndex: Int = -1
         if (commentsInNotes[ownerId.toInt()]?.get(commentId.toInt()) != null) {
             val comment = commentsInNotes[ownerId.toInt()]?.get(commentId.toInt())
-            if(comment?.isDelete == true) {
+            if (comment?.isDelete == true) {
                 comment.isDelete = false
-                commentsInNotes[ownerId.toInt()]?.set(commentId.toInt(),comment)
+                commentsInNotes[ownerId.toInt()]?.set(commentId.toInt(), comment)
                 returnIndex = 1
             } else {
-                throw ObjectDeleteException (" Object is not deleted")
+                throw ObjectDeleteException(" Object is not deleted")
             }
         }
         return returnIndex
     }
+
 
     private fun getNoteImplementableObject(
         noteIds: String? = null,
@@ -298,7 +275,6 @@ object NoteService {
         offset: UInt,
         count: UInt,
         sort: UInt
-
     ): List<NoteImplementable> {
 
         val tempArray = if (noteId == null) {
@@ -312,9 +288,10 @@ object NoteService {
             error("Index out of bounds or comments is not found from this user")
         } else {
             val returnList =
-                tempArray.toList().filter { !it.isDelete }.filter { it.id in offset.toInt()..(offset + count).toInt() }
+                tempArray.toList().filter { !it.isDelete }
+                    .filter { it.id in offset.toInt()..(offset + count - 1U).toInt() }
 
-        return when (sort) {
+            return when (sort) {
                 1U -> {
                     returnList.sortedBy { n: NoteImplementable -> n.date }
                 }

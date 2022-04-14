@@ -1,3 +1,7 @@
+package ru.netology
+
+import Post
+import WallService
 import WallService.add
 import WallService.copyPostsArrayToTests
 import org.junit.Test
