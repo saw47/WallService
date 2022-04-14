@@ -1,5 +1,6 @@
 package ru.netology
 import NoteService
+import ObjectDeleteException
 import OwnerService
 import org.junit.Test
 import org.junit.Assert.*
@@ -174,6 +175,21 @@ class NoteServiceTest {
         assertEquals(isDeleteIndex, 1)
         val isNowDelete = NoteService.noteIdMap[OwnerService.getId().toInt()]?.first()?.isDelete
         assertEquals(isNowDelete, true)
+        NoteService.noteIdMap.clear()
+    }
+
+    @Test (expected = ObjectDeleteException::class)
+    fun deleteDeletedNote() {
+        val firstAdd: Int = NoteService.add(
+            title = "first",
+            text = "first text",
+            privacy = 1,
+            commentPrivacy = 1,
+            privacyView = "all",
+            privacyComment = "all"
+        )
+        NoteService.noteIdMap[OwnerService.getId().toInt()]?.first()?.id?.let { NoteService.delete(it.toUInt()) }
+        NoteService.noteIdMap[OwnerService.getId().toInt()]?.first()?.id?.let { NoteService.delete(it.toUInt()) }
         NoteService.noteIdMap.clear()
     }
 
