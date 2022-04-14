@@ -8,6 +8,8 @@ import org.junit.Assert.*
 class NoteServiceTest {
     @Test
     fun add() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -60,11 +62,12 @@ class NoteServiceTest {
         assertEquals(index, 2)
         val sizeArrayWIthNote = NoteService.noteIdMap[OwnerService.getId().toInt()]?.size
         assertEquals(sizeArrayWIthNote, 6)
-        NoteService.noteIdMap.clear()
     }
 
     @Test
     fun createComment() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -146,12 +149,12 @@ class NoteServiceTest {
         assertEquals(commentFive, 4)
         assertEquals(NoteService.commentsInNotes[OwnerService.getId().toInt()]?.get(commentSix)?.message, "6 comment message")
         assertEquals(NoteService.commentsInNotes[OwnerService.getId().toInt()]?.get(commentFour)?.noteId, 2U)
-        NoteService.noteIdMap.clear()
-        NoteService.commentsInNotes.clear()
     }
 
     @Test
     fun delete() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -175,11 +178,12 @@ class NoteServiceTest {
         assertEquals(isDeleteIndex, 1)
         val isNowDelete = NoteService.noteIdMap[OwnerService.getId().toInt()]?.first()?.isDelete
         assertEquals(isNowDelete, true)
-        NoteService.noteIdMap.clear()
     }
 
     @Test (expected = ObjectDeleteException::class)
     fun deleteDeletedNote() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -190,11 +194,12 @@ class NoteServiceTest {
         )
         NoteService.noteIdMap[OwnerService.getId().toInt()]?.first()?.id?.let { NoteService.delete(it.toUInt()) }
         NoteService.noteIdMap[OwnerService.getId().toInt()]?.first()?.id?.let { NoteService.delete(it.toUInt()) }
-        NoteService.noteIdMap.clear()
     }
 
     @Test
     fun deleteComment() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -227,12 +232,12 @@ class NoteServiceTest {
             ownerId = OwnerService.getId().toUInt()
         )
         assertEquals(NoteService.commentsInNotes[100000]?.get(commentTwo)?.isDelete, true)
-        NoteService.noteIdMap.clear()
-        NoteService.commentsInNotes.clear()
     }
 
     @Test
     fun edit() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "usual text",
@@ -256,11 +261,12 @@ class NoteServiceTest {
         }
         val noteMod = NoteService.noteIdMap[OwnerService.getId().toInt()]?.get(0)
         assertEquals(noteMod?.text, "modified text")
-        NoteService.noteIdMap.clear()
     }
 
     @Test
     fun editComment() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -283,12 +289,12 @@ class NoteServiceTest {
         )
         assertEquals(returnNumber,1)
         assertEquals(NoteService.commentsInNotes[OwnerService.getId().toInt()]?.get(commentOne)?.message, "new message")
-        NoteService.noteIdMap.clear()
-        NoteService.commentsInNotes.clear()
     }
 
     @Test
     fun get() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -337,11 +343,12 @@ class NoteServiceTest {
         )
         assertEquals(noteList.size, 2)
         assertEquals(noteList.first().text, "second text" )
-        NoteService.noteIdMap.clear()
     }
 
     @Test
     fun getById() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -368,6 +375,8 @@ class NoteServiceTest {
 
     @Test
     fun getComments() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -427,12 +436,12 @@ class NoteServiceTest {
         )
         assertEquals(list.size, 3)
         assertEquals(list.last().message, "3 comment message")
-        NoteService.noteIdMap.clear()
-        NoteService.commentsInNotes.clear()
     }
 
     @Test
     fun restoreComment() {
+        NoteService.noteIdMap.clear()
+        NoteService.commentsInNotes.clear()
         val firstAdd: Int = NoteService.add(
             title = "first",
             text = "first text",
@@ -459,7 +468,5 @@ class NoteServiceTest {
         )
         assertEquals(restore, 1)
         assertEquals(NoteService.commentsInNotes[OwnerService.getId().toInt()]?.get(mustDelete)?.isDelete, false)
-        NoteService.noteIdMap.clear()
-        NoteService.commentsInNotes.clear()
     }
 }
