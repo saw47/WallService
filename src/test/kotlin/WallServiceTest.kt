@@ -146,7 +146,7 @@ class WallServiceTest {
 
         updatePost.likes.count = 100u
         updatePost.reposts.userReposted = false
-        updatePost.comments.count = 100u
+        updatePost.comment.count = 100u
 
         WallService.update(updatePost)
 
@@ -154,7 +154,7 @@ class WallServiceTest {
 
         assertEquals(updatePost.likes.count, copyPostsArrayToTests()[updatePost.id].likes.count)
         assertEquals(updatePost.reposts.userReposted, copyPostsArrayToTests()[updatePost.id].reposts.userReposted)
-        assertEquals(updatePost.comments.count, copyPostsArrayToTests()[updatePost.id].comments.count)
+        assertEquals(updatePost.comment.count, copyPostsArrayToTests()[updatePost.id].comment.count)
         assertEquals(true, result)
 
     }

@@ -9,8 +9,13 @@ data class Photo(
     val originalHeight: Int,
     val copyType: String,
     val url: String
-) : Attachments {
+) : Attachments, AbleAttachToComment {
     override val type: String = "photo"
+
+    override fun returnAttachableMediaId(): String {
+        return photo.mediaId.toString()
+    }
+
     private val photo: InternalPhoto = InternalPhoto(
         id = this.id,
         albumId = this.albumId,
@@ -35,7 +40,9 @@ data class Photo(
         private val originalHeight: Int,
         private val copyType: String,
         private val url: String
-    ) {
+    ) : InternalMediaToCommentAttachable {
+
+        override val mediaId: Int = id
         private val sizes = arrayOf(PhotoSizes(copyType, url, originalWidth, originalHeight))
 
         data class PhotoSizes(
@@ -100,7 +107,7 @@ data class App(
 
 data class PrettyCards(
     private val cardId: String,
-    private val  linkUrl: String,
+    private val linkUrl: String,
     private val title: String,
     private val width: Int,
     private val height: Int
@@ -116,6 +123,7 @@ data class PrettyCards(
         private val height: Int
     ) {
         var images = arrayOf<Images>(Images(linkUrl, width, height))
+
         data class Images(
             private val url: String,
             private val width: Int,
