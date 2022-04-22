@@ -1,3 +1,9 @@
+package ru.netology
+
+import Comment
+import Post
+import PostNotFoundException
+import WallService
 import org.junit.Test
 import java.time.Instant
 import org.junit.Assert.*
